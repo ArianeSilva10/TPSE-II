@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancela Automática</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #c81c6f, #581c87);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            width: 400px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .status.carro-detectado {
+            background: #22c55e;
+        }
+
+        .status.livre {
+            background: #dc2626;
+        }
+
+        .mensagem {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            margin-top: 20px;
+            background: white;
+            color: #581c87;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #c81c6f;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Cancela Automática</h1>
+        <div id="status" class="status livre">Nenhum carro detectado</div>
+        <div id="mensagem" class="mensagem">Aguardando veículo...</div>
+    </div>
+
+    <script>
+        function atualizarStatus() {
+            fetch('/cgi-bin/status.sh')
+                .then(response => response.text())
+                .then(data => {
+                    let statusDiv = document.getElementById("status");
+                    let mensagemDiv = document.getElementById("mensagem");
+
+                    if (data.includes("CARRO DETECTADO")) {
+                        statusDiv.innerText = "Carro detectado!";
+                        statusDiv.className = "status carro-detectado";
+                        mensagemDiv.innerText = "Seja bem-vindo!";
+                    } else {
+                        statusDiv.innerText = "Nenhum carro detectado";
+                        statusDiv.className = "status livre";
+                        mensagemDiv.innerText = "Aguardando veículo...";
+                    }
+                })
+                .catch(error => console.error("Erro ao buscar status do sensor:", error));
+        }
+    
+        setInterval(atualizarStatus, 2000); // Atualiza a cada 2 segundos
+        atualizarStatus();
+    </script>
+    
+</body>
+</html>
+

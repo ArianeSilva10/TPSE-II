@@ -1,0 +1,1 @@
+savedcmd_/home/ariane/TPSE-II/lab/pratica_08/driver_hello/Module.symvers :=  scripts/mod/modpost -m -a     -o /home/ariane/TPSE-II/lab/pratica_08/driver_hello/Module.symvers -T /home/ariane/TPSE-II/lab/pratica_08/driver_hello/modules.order -i Module.symvers -e 

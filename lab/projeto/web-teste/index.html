@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancela Automática</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #c81c6f, #581c87);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px;
+            background-color: #581c87;
+            border: none;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #c81c6f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Cancela Automática</h1>
+        <button onclick="toggleGate('open')">Abrir Portão</button>
+        <button onclick="toggleGate('close')">Fechar Portão</button>
+    </div>
+
+    <script>
+        function toggleGate(action) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `http://localhost:8080/?action=${action}`, true);
+            xhr.send();
+        }
+    </script>
+    
+</body>
+</html>

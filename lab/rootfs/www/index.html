@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancela Automática</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #c81c6f, #581c87); height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; color: white; }
+        .container { background: rgba(0, 0, 0, 0.6); padding: 30px; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="status">Esperando pelo carro...</h1>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        fetch('http://localhost:8080').then(response => response.text()).then(data => {
+            document.getElementById('message').innerHTML = data;
+        });
+    </script>
+</body>
+</html>

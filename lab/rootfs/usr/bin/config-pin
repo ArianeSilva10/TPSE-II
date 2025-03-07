@@ -1,0 +1,65 @@
+#!/bin/sh
+
+# Simple config-pin implementation for Buildroot systems
+PIN=$1
+MODE=$2
+
+if [ -z "$PIN" ] || [ -z "$MODE" ]; then
+    echo "Usage: config-pin <pin> <mode>"
+    echo "Example: config-pin P9_19 i2c"
+    exit 1
+fi
+
+# Convert pin name to GPIO number and settings
+case "$PIN" in
+    "P9_19")
+        if [ "$MODE" = "i2c" ]; then
+            GPIO_PIN="gpio3_9"
+            ADDR="/sys/class/gpio/gpio105"
+            echo 0x178 > /sys/devices/platform/ocp/ocp:P9_19_pinmux/state
+        fi
+        ;;
+    "P9_20")
+        if [ "$MODE" = "i2c" ]; then
+            GPIO_PIN="gpio3_8"
+            ADDR="/sys/class/gpio/gpio104"
+            echo 0x17c > /sys/devices/platform/ocp/ocp:P9_20_pinmux/state
+        fi
+        ;;
+    *)
+        echo "Unsupported pin: $PIN"
+        exit 1
+        ;;
+esac
+
+if [ "$MODE" = "i2c" ]; then
+    # Configure the pin for I2C mode
+    if [ -d "$ADDR" ]; then
+        echo "in" > "$ADDR/direction"
+        echo 1 > "$ADDR/value"
+    else
+        echo "$GPIO_PIN" > /sys/class/gpio/export
+        echo "in" > "$ADDR/direction"
+        echo 1 > "$ADDR/value"
+    fi
+    echo "Pin $PIN configured for I2C mode"
+fi
+
+# For query mode
+if [ "$1" = "-q" ]; then
+    PIN=$2
+    case "$PIN" in
+        "P9_19"|"P9_20")
+            STATE=$(cat /sys/devices/platform/ocp/ocp:${PIN}_pinmux/state 2>/dev/null)
+            if [ "$STATE" = "0x178" ] || [ "$STATE" = "0x17c" ]; then
+                echo "Mode: i2c"
+            else
+                echo "Mode: gpio"
+            fi
+            ;;
+        *)
+            echo "Unsupported pin for query: $PIN"
+            exit 1
+            ;;
+    esac
+fi

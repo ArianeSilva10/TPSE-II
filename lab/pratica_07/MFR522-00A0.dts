@@ -1,0 +1,48 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+    part-number = "MFRC522";
+    version = "00A0";
+
+    exclusive-use =
+        "P9.17",    /* SPI0_CS0 */
+        "P9.18",    /* SPI0_D1 */
+        "P9.21",    /* SPI0_D0 */
+        "P9.22",    /* SPI0_SCLK */
+        "P9.15",    /* GPIO para RST */
+        "spi0";
+
+    fragment@0 {
+        target = <&am33xx_pinmux>;
+        __overlay__ {
+            mfrc522_pins: pinmux_mfrc522_pins {
+                pinctrl-single,pins = <
+                    0x15c 0x30  /* P9_17 (A16) spi0_cs0.spi0_cs0 OUTPUT_PULLUP | MODE0 */
+                    0x158 0x30  /* P9_18 (B16) spi0_d1.spi0_d1 INPUT_PULLUP | MODE0 */
+                    0x154 0x30  /* P9_21 (B17) spi0_d0.spi0_d0 OUTPUT_PULLUP | MODE0 */
+                    0x150 0x30  /* P9_22 (A17) spi0_sclk.spi0_sclk OUTPUT_PULLUP | MODE0 */
+                    0x040 0x17  /* P9_15 (GPIO) para RST OUTPUT_PULLUP | MODE7 */
+                >;
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&spi0>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+            pinctrl-names = "default";
+            pinctrl-0 = <&mfrc522_pins>;
+
+            mfrc522@0 {
+                compatible = "spidev";
+                spi-max-frequency = <10000000>;
+                reg = <0>;
+            };
+        };
+    };
+};
