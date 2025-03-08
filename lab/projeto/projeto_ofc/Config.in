@@ -1,0 +1,4 @@
+config BR2_PACKAGE_PROJETO_OFC
+    bool "projeto_ofc"
+    help
+      Programa simples mover o portão.
