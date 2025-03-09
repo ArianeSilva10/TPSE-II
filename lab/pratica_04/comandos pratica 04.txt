@@ -1,0 +1,73 @@
+=> print bootcmd
+bootcmd=fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb;fatload mmc 0:1 0x80007FC0 zImage;bootz 0x80007FC0 - 0x80F80000
+=> print bootargs
+bootargs=console=ttyS0,115200n8 root=/dev/mmcblk1p1 ro rootfstype=ext4 rootwait
+=> 
+
+
+/home/ariane/TPSE-II/lab/rootfs 10.10.0.2(rw,no_root_squash,no_subtree_check)
+
+
+
+setenv argsnfs root=/dev/nfs rw nfsroot=${serverip}:/home/ariane/TPSE-II/lab/rootfs rootwait
+ou
+setenv argsnfs root=/dev/nfs rw rootfstype=nfs nfsroot=${serverip}:/home/ariane/TPSE-II/lab/rootfs,nfsvers=3,tcp rootwait
+
+setenv consolecfg console=ttyS0,115200,n8
+ou
+setenv consolecfg console=ttyS0,115200n8
+
+setenv ipcfg ip=10.10.0.2
+
+setenv bootargs ${consolecfg} ${ipcfg} ${argsnfs}
+
+saveenv
+
+boot
+
+
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb;fatload mmc 0:1 0x80007FC0 zImage;run bootargs;bootz 0x80007FC0 - 0x80F80000"
+
+
+
+
+
+
+
+
+ariane:$6$salto$6$89EJ7qcBnXBa7CZI$yqZa/wkmgFLGMlHvShM6Bqdy2ehNOC6OiJb6kCNnlUGzP8fE7h22Ff2O3q2xptwyyyvPOMID9luTLDt/EJbT40:0:0:99999:7:::
+
+
+6$89EJ7qcBnXBa7CZI$yqZa/wkmgFLGMlHvShM6Bqdy2ehNOC6OiJb6kCNnlUGzP8fE7h22Ff2O3q2xptwyyyvPOMID9luTLDt/EJbT40
+
+
+
+#!/bin/bash
+for i in {0..3}; do
+    echo 1 > /sys/devices/platform/leds/leds/beaglebone:green:usr$i/brightness
+    sleep 1
+    echo 0 > /sys/devices/platform/leds/leds/beaglebone:green:usr$i/brightness
+done
+
+
+  rsync -a ~/x-tools/arm-tpse2-linux-musleabi/arm-tpse2-linux-musleabi/lib/ ./lib/
+
+
+httpd -h /www -p 8080
+
+
+  rsync -a /home/ariane/TPSE-II/lab/teste-web/ ./www/
+  
+  
+  arm-linux-gcc socket_server.c -o socket_server_static --static
+  
+  cp socket_server_static /home/ariane/TPSE-II/lab/rootfs/www/
+
+chmod +x socket_server_static
+
+  arm-linux-gcc piscarleds.c -o piscarleds_static --static
+  
+    cp piscarleds_static /home/ariane/TPSE-II/lab/rootfs/pratica/
+    
+    chmod +x piscarleds_static

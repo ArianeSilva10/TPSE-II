@@ -1,0 +1,167 @@
+comandos pratica 7
+
+# ls /sys/class/pwm/
+#
+
+
+make 2>&1 | tee build.log
+
+sudo mount /dev/mmcblk0p1 /media/ariane/BOOT
+sudo cp am335x-boneblack.dtb /media/ariane/BOOT
+sudo cp zImage /media/ariane/BOOT
+sudo umount /media/ariane/BOOT
+
+tar -C ~/TPSE-II/lab/rootfs/ -xf output/images/rootfs.tar
+
+ dtc -@ -I dts -O dtb -o am335x-boneblack.dtb am335x-boneblack.dts
+
+
+no terminal do pc:
+cp BB-PWM1-00A0.dtbo /tftp
+
+terminal da bbb:
+tftp 0x83000000 BB-PWM1-00A0.dtbo
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-PWM1-00A0.dtbo; fdt addr 0x80F80000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x80F80000"
+
+#!/bin/bash
+
+# Exportar o canal PWM
+echo 0 > /sys/class/pwm/pwmchip0/export
+
+# Configurar o período (20 ms)
+echo 20000000 > /sys/class/pwm/pwmchip0/pwm0/period
+
+# Habilitar o PWM
+echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+# Mover o servo para 0°
+echo 1000000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+sleep 1
+
+# Mover o servo para 90°
+echo 1500000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+sleep 1
+
+# Mover o servo para 180°
+echo 2000000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+sleep 1
+
+# Desabilitar o PWM
+echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+# Liberar o canal PWM
+echo 0 > /sys/class/pwm/pwmchip0/unexport
+
+
+
+chmod +x pwm_led
+chmod +x pwm_servo
+
+# Exportando o PWM
+echo 0 > /sys/class/pwm/pwmchip0/export
+
+# Configurando o período (20 ms ou 50 Hz)
+echo 20000000 > /sys/class/pwm/pwmchip0/pwm0/period
+
+# Configurando o Duty Cycle para 1,5 ms (posição central do servo)
+echo 1500000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+# Habilitando o sinal PWM
+echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+
+
+######################################################################################
+MUDEI NO MENUCONFIG:
+am335x-boneblack
+am335x-evm
+######################################################################################
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+MUDANCA NA BBB:
+ANTES:
+no terminal do pc:
+cp BB-PWM1-00A0.dtbo /tftp
+
+terminal da bbb:
+tftp 0x83000000 BB-PWM0-00A0.dtbo
+tftp 0x80F80000 am335x-boneblack.dtb
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-PWM0-00A0.dtbo; fdt addr 0x80F80000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x80F80000"
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+DEPOIS:
+no terminal do pc:
+cp am335x-evm.dtb /tftp
+
+terminal da bbb:
+set ipaddr 10.10.0.2;
+set serverip 10.10.0.1;
+tftp 0x82000000 am335x-evm.dtb
+
+set bootcmd "fatload mmc 0:1 0x82000000 am335x-evm.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-PWM0-00A0.dtbo; fdt addr 0x82000000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x82000000"
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+TESTE:
+no terminal do pc:
+cp am335x-evm.dtb /tftp
+
+terminal da bbb:
+set ipaddr 10.10.0.2;
+set serverip 10.10.0.1;
+tftp 0x82000000 am335x-evm.dtb
+
+
+set bootcmd "fatload mmc 0:1 0x82000000 am335x-evm.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-PWM1-00A0.dtbo; fdt addr 0x82000000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x82000000"
+
+##################################################################
+tftp 0x80F80000 am335x-evm.dtb
+
+setenv bootcmd "fatload mmc 0:1 0x80F80000 am335x-evm.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x80F80000"
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+
+
+echo 0 > /sys/class/pwm/pwmchip0/export
+echo 1000000 > /sys/class/pwm/pwmchip0/pwm0/period
+echo 500000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
+echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable
+echo 0 > /sys/class/pwm/pwmchip0/unexport
+
+
+echo 0 > /sys/class/pwm/pwmchip1/export
+echo 1000000 > /sys/class/pwm/pwmchip1/pwm0/period
+echo 500000 > /sys/class/pwm/pwmchip1/pwm0/duty_cycle
+echo 1 > /sys/class/pwm/pwmchip1/pwm0/enable
+echo 0 > /sys/class/pwm/pwmchip1/pwm0/enable
+echo 0 > /sys/class/pwm/pwmchip1/unexport
+
+
+
+
+echo 0 > /sys/class/pwm/pwmchip0/export
+
+echo 20000000 > /sys/class/pwm/pwmchip0/pwm0/period
+
+echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+0°
+echo 1000000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+
+ 90°
+echo 1500000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+
+ 180°
+echo 2000000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+echo 0 > /sys/class/pwm/pwmchip0/unexport

@@ -1,0 +1,115 @@
+bootcmd=fatload mmc 0:1 0x80F80000 am335x-boneblack-raissa.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x80F80000
+bootargs=console=ttyS0,115200n8 ip=10.10.0.2 root=/dev/nfs rw rootfstype=nfs nfsroot=10.10.0.1:/home/raissa/rootfs,nfsvers=3,tcp rootwait
+argsnfs=root=/dev/nfs rw rootfstype=nfs nfsroot=10.10.0.2:/home/raissa/rootfs,nfsvers=3,tcp rootwait
+
+make 2>&1 | tee build.log
+
+sudo mount /dev/mmcblk0p1 /media/ariane/BOOT
+sudo cp am335x-boneblack.dtb /media/ariane/BOOT
+sudo cp zImage /media/ariane/BOOT
+sudo umount /media/ariane/BOOT
+
+tar -C ~/TPSE-II/lab/rootfs/ -xf output/images/rootfs.tar
+
+gedit output/build/linux-v6.0/arch/arm/boot/dts/am335x-boneblack-ariane.dts
+
+
+tftp 0x83000000 BB-SPIDEV1-00A0.dtbo
+tftp 0x80F80000 am335x-boneblack-ariane.dtb
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-SPIDEV1-00A0.dtbo; fdt addr 0x80F80000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x80F80000"
+
+outro spi
+
+tftp 0x83000000 BB-SPIDEV0-00A0.dtbo
+tftp 0x80F80000 am335x-boneblack-ariane.dtb
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-SPIDEV0-00A0.dtbo; fdt addr 0x80F80000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x80F80000"
+
+
+# ./rfid                                                                        
+Erro: Não foi possível abrir dispositivo SPI                                    
+# 
+
+
+
+
+habilitar o /debug
+
+mount -t debugfs none /sys/kernel/debug
+
+cat /sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pinmux-functions 
+
+setenv bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-SPIDEV0-00A0.dtbo; fdt addr 0x80F80000; fdt resize 16384; fdt set /chosen bootargs $bootargs; fdt apply 0x83000000; bootz 0x80007FC0 - 0x80F80000"
+
+
+
+Após inicializar o BBB, carregue o driver SPI:
+modprobe spidev.ko
+
+Verifique se o driver foi carregado com o comando lsmod.
+
+echo 60 > /sys/class/gpio/export                           
+echo out > /sys/class/gpio/gpio60/direction                
+echo 1 > /sys/class/gpio/gpio60/value  
+
+# uname -r                                                                      
+6.4.0                                                                           
+# ls /sys/class/gpio/                                                           
+export       gpiochip512  gpiochip544  gpiochip576  gpiochip608  unexport       
+echo 540 > /sys/class/gpio/export                                             
+echo out > /sys/class/gpio/gpio540/direction                                  
+echo 1 > /sys/class/gpio/gpio540/value                                        
+ls /sys/class/pwm/                                                            
+pwmchip0                                                                        
+echo 0 > /sys/class/gpio/gpio540/value                                        
+echo 540 > /sys/class/gpio/unexport  
+
+528 - gpio1_16 - p9_15 - sensor
+540 - gpio1_28 - p9_12 - buzzer
+
+echo 0 > /sys/class/pwm/pwmchip0/export
+
+echo 20000000 > /sys/class/pwm/pwmchip0/pwm0/period
+
+echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+0°
+echo 1000000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+-90°
+echo 500000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+ 90°
+echo 1500000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+
+ 180°
+echo 2000000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+echo 0 > /sys/class/pwm/pwmchip0/unexport
+
+
+---------------------------------------------------------------
+tftp 0x80F80000 am335x-boneblack.dtb
+
+setenv bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x80F80000"
+----------------------------------------------------------
+
+
+-90°
+echo 500000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+
+trio - sensor
+3.3v - roxinho
+gpio -marrom
+gnd - verde
+
+trio - servo
+gnd - laranja
+sinal - ponta azul, fita preta mais proxima da ponta
+5.5V - ponta azul, fita preta mais longe
+

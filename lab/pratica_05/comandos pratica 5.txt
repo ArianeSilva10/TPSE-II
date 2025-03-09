@@ -1,0 +1,279 @@
+comandos pratica 5
+
+curso BBB-udemy:
+
+aula 82:
+
+make beaglebone_defconfig
+
+make menuconfig
+###############################################################
+NO MENUCONFIG:
+
+Toolchain
+	toolchain type:
+		- External toolchain
+	*no video ele marcou o linaro, no meu caso o custom toolchain*
+	
+	toolchain origin:
+		- Pre-installed toolchain
+		
+	Toochain path
+		-[.../Downloads/gcc-linaro-6.3.1-2017.02-x86_64_arm-linux-gnueabihf/bin
+		ele modificou removendo o /bin:
+		-[/home/kiran/BBB_Workspace/Downloads/gcc-linaro-6.3.1-2017.02-x86_64_arm-linux-gnueabihf
+
+		
+aula 83:	
+	System configuration:
+		System hostname
+			- kiran(nome dele)
+		System banner
+			- Welcome to Buildroot-BBB
+		Passwords encoding 
+			- md5
+		Enable root with password
+			
+		Root password
+			-root
+		Run a getty (login prompt) after boot
+			- por minha conta sugiro ttyS0 como TTY port
+			- Baudrate (115200)
+			
+	kernel
+		-│spl/u-boot-spl.bin    desabilita o Linux kernel
+	Target packages
+		Networking applications
+			-openssh
+	Bootloaders
+		- desabilita o U-Boot
+#################################################################################
+
+video 84:
+depois de criar o buildroot, pode aparecer erros tipo de MLO , Não tem problema
+
+ls
+cd output
+ls
+[vai aparecer os rootfs]
+tar -xf rootfs.tar -C /srv/nfs/bbb/
+
+@@@@@@@@@@@@@@@@@
+NA BBB
+login: root
+password: root
+@@@@@@@@@@@@@@@@
+
+no pc:
+ssh -l root 192.168.7.2
+*pede a senha q é root
+no dele deu erro de permissão negada
+o q ele fez:
+
+cd /srv/nfs/bbb/
+ls
+cd etc/
+ls
+cd ssh/
+ls
+vi sshd_config
+* abre um arquivo de configuração de ssh 
+* descomenta a parte que diz:
+PermitRootLogin prohibit-password
+e muda pra isso:
+PermitRootLogin yes
+
+*tenta novamente e se der permissão negada de novo vai no terminnal da BBB:
+@@@@@@@@@@@@@@@@
+cd /etc/init.d/
+ls
+./S50sshd restart
+@@@@@@@@@@@@@@@@@@
+
+*tenta novamente
+*se deu certo eu estou acessando o terminal da bbb pelo pc
+*para sair digite "exit"
+
+para eu acessar meu pc pela bbb:
+@@@@@@@@@@@@@@@@@@@@
+no terminal da BBB
+
+ssh -l kiran 192.168.7.1
+
+* deve pedir a senha do seu pc e pronto
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+aula 85:
+no menuconfig:
+############################################
+kernel
+	-seleciona o Linux Kernel
+	Kernel version
+		-versão mais recente
+	Kernel configuration
+		-Using an in-tree defconfig file
+	Defconfig name
+		- bb.org
+	Kernel binary format
+		*ele mudou zImage para uImage
+	load address  (for 3.7+ multi-platform image
+		-0x80008000
+		*este endereço é aquele da pratica 3
+	-Build a Device Tree Blob (DTB)
+		-seleciona
+		Device tree source
+			- use a device tree present in the kernel
+		Device Tree Source file names
+			- am335x-boneblack
+		Linux Kernel Tools
+			* eu sugiro selecionar o gpio
+			
+	Bootloaders
+		*seleciona U-Boot
+		U-Boot Version
+			- *a mais recente
+		U-Boot configuration
+			-Using an in-tree board defconfig file
+		Board defconfig
+			-*muda de am335x_evm para am335x_boneblack
+salva
+##############################################
+make -j4
+
+aula 86:
+depois da compilação do make, vemos q tem um erro: "Can't find default configuration "arch/arm/configs/bb.org_defconfig""
+
+para resolver:
+verifica la no output/build/linux.../arch/arm/configs se o bb.org ta la, se nao tiver procura pelo omap2plus_defconfig
+
+abre o menuconfig
+#########################################
+
+	kernel
+		*muda o defconfig name
+			- oma2plus
+salva
+
+#########################################
+make -j4
+
+depois no dele dar erro pq nao encontrou o zImage, tudo bem pra ele pois ele selecionou uImage
+
+*verifica em /output/images/ as imagens geradas
+
+*lá ele não trasnfere o rootfs pois ele nao mudou nada entao ele ja fez isso
+* passa as imagens via tftp
+
+cp uImage /var/lib/tftpboot/
+
+cp am335x-boneblack.dtb /var/lib/tftpboot/
+
+*se quiser passar o .img para o sd card
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@
+*para ver a versão q usa:
+
+uname -r
+@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+
+
+
+
+-------------------------------------------
+pratica 05
+
+#########################
+passwords encoding
+	- sha-256
+	
+spl/u-boot-spl.bin    
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+  sudo mount /dev/mmcblk0p1 /media/ariane/BOOT
+  sudo cp MLO /media/ariane/BOOT
+  sudo cp u-boot.img /media/ariane/BOOT
+  sudo umount /media/ariane/BOOT
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+set ipaddr 10.10.0.2;
+set serverip 10.10.0.1;
+
+tftp 0x80F80000 am335x-boneblack.dtb
+tftp 0x80007FC0 zImage
+
+fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb
+
+fatload mmc 0:1 0x80007FC0 zImage
+
+set bootargs "console=ttyS0,115200n8 root=/dev/mmcblk1p2 ro rootfstype=ext4 rootwait"
+
+saveenv
+
+reset
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb;fatload mmc 0:1 0x80007FC0 zImage;bootz 0x80007FC0 - 0x80F80000"
+
+saveenv
+
+
+
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+executando na bbb:
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+=> print bootcmd                                                                
+bootcmd=run findfdt; run init_console; run finduuid; run distro_bootcmd         
+
+
+se der erro de : 
+  ~/TPSE-II/lab/pratica_05/buildroot   bootlin ≢  ?1 ~12814   11:06:30   20ms⠀
+🦄  ssh root@10.10.0.2
+ssh: connect to host 10.10.0.2 port 22: Connection refused
+SOLUÇÃO:
+ativar o dropbear pelo menuconfig
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+echo ’PermitRootLogin yes’ >> /etc/ssh/sshd_config
+
+echo ’PermitEmptyPasswords yes’ >> /etc/ssh/sshd_config
+
+/etc/init.d/S50sshd restart
+
+
+U-Boot 2022.04 (Oct 15 2022 - 01:12:15 -0300) ArianeBoot, by Ariane - Copyright (R) 2024
+
+source "package/leds_control_app/Config.in"
+
+sudo tar -C ~/TPSE-II/lab/rootfs/ -xf output/images/rootfs.tar
+
+
+se a conexão do ssh der problema:
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ED25519 key sent by the remote host is
+SHA256:oQXWyvlMthGoQfPNwgrUG/HgVuMQKyoGltA4NhKtqBA.
+Please contact your system administrator.
+Add correct host key in /home/ariane/.ssh/known_hosts to get rid of this message.
+Offending ED25519 key in /home/ariane/.ssh/known_hosts:5
+  remove with:
+  ssh-keygen -f '/home/ariane/.ssh/known_hosts' -R '10.10.0.2'
+Host key for 10.10.0.2 has changed and you have requested strict checking.
+Host key verification failed.
+
+solução:
+coloque este comando:
+  ~/TPSE-II/lab/pratica_05/buildroot-rascunho/buildroot   bootlin ≢  ?2 ~1   18:52:54   170ms⠀
+ ssh-keygen -f '/home/ariane/.ssh/known_hosts' -R '10.10.0.2'
+
+depois tente novamente

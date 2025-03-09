@@ -1,0 +1,82 @@
+comandos pratica 3
+
+set ipaddr 10.10.0.2;
+set serverip 10.10.0.1;
+
+setenv bootargs "console=ttyS0,115200,n8"
+
+tftp 0x80F80000 am335x-boneblack.dtb
+tftp 0x80007FC0 zImage
+bootz 0x80007FC0 - 0x80F80000
+
+
+set ipaddr 10.10.0.2
+set serverip 10.10.0.1
+
+tftp 0x80F80000 am335x-boneblack.dtb
+tftp 0x80007FC0 zImage
+
+setenv bootargs console=ttyS0,115200n8 root=/dev/mmcblk0p1 ro rootfstype=ext4 rootwait
+
+saveenv
+
+bootz 0x80007FC0 - 0x80F80000
+
+
+
+set ipaddr 10.10.0.2;
+set serverip 10.10.0.1;
+
+tftp 0x80F80000 am335x-boneblack.dtb
+tftp 0x80007FC0 zImage
+
+fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb
+
+fatload mmc 0:1 0x80007FC0 zImage
+
+set bootargs "console=ttyS0,115200n8 root=/dev/mmcblk1p2 ro rootfstype=ext4 rootwait"
+
+saveenv
+
+reset
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack.dtb;fatload mmc 0:1 0x80007FC0 zImage;bootz 0x80007FC0 - 0x80F80000"
+
+saveenv
+
+reset
+
+
+
+No terminal da BeagleBone, abra um editor como nano para criar o script:
+
+
+nano leds_blink.sh
+
+3. Escreva o Script
+
+#!/bin/bash
+for i in {0..3}; do
+    echo 1 > /sys/class/leds/beaglebone:green:usr$i/brightness
+    sleep 1
+    echo 0 > /sys/class/leds/beaglebone:green:usr$i/brightness
+done
+
+
+4. Salve o Arquivo
+No nano, pressione Ctrl + O para salvar e Ctrl + X para sair.
+
+
+5. Dê Permissões de Execução
+Torne o script executável:
+
+chmod +x led_control.sh
+
+6. Execute o Script
+Execute o script diretamente no terminal:
+
+./led_control.sh
+
+
+
+set bootargs "console=ttyS0,115200n8 root=/dev/mmcblk1p1 ro rootfstype=ext4 rootwait"

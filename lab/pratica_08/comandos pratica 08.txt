@@ -1,0 +1,309 @@
+comandos pratica 08
+
+make ARCH=arm INSTALL_MOD_PATH=/XXX/rootfs modules_install
+
+sudo mount /dev/mmcblk0p1 /media/ariane/BOOT
+sudo cp am335x-boneblack.dtb /media/ariane/BOOT
+sudo cp zImage /media/ariane/BOOT
+sudo umount /media/ariane/BOOT
+
+tar -C ~/TPSE-II/lab/rootfs/ -xf output/images/rootfs.tar
+
+insmod /lib/modules/6.4.0/kernel/drivers/usb/storage/usb-storage.ko
+modprobe usb-storage
+
+modprobe usbcore                                                           
+modprobe usb-common                                                        
+modprobe ehci-hcd                                                          
+modprobe uhci-hcd                                                          
+modprobe ohci-hcd                                                          
+modprobe xhci-hcd                                                          
+lsusb                                                                      
+dmesg | grep -i usb                                                        
+lspci | grep -i usb                                                        
+modprobe -r usbcore                                                        
+modprobe usbcore                                                           
+insmod /lib/modules/6.4.0/kernel/drivers/usb/storage/usb-storage.ko        
+modprobe usb-storage  
+
+em resumo:
+# modprobe usbcore                                                              
+[  156.511678] usbcore: registered new interface driver usbfs                   
+[  156.517528] usbcore: registered new interface driver hub                     
+[  156.522961] usbcore: registered new device driver usb                        
+# insmod /lib/modules/6.4.0/kernel/drivers/usb/storage/usb-storage.ko           
+[  163.569316] usbcore: registered new interface driver usb-storage             
+# modprobe usb-storage  
+
+/home/nathalia/labs_tpse/toolchain/arm-nathalia-linux-musleabihf/bin/arm-nathalia-linux-musleabihf-
+/home/ariane/x-tools/arm-tpse2-linux-musleabi/bin/arm-tpse2-linux-musleabi-
+
+
+tftp 0x80F80000 am335x-evm.dtb
+
+setenv bootcmd "fatload mmc 0:1 0x80F80000 am335x-evm.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x80F80000"
+
+--------------------------------------------------------------
+tftp 0x80F80000 am335x-boneblack-ariane.dtb
+
+setenv bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x80F80000"
+
+---------------------------------------------------------------
+tftp 0x82000000 am335x-boneblack-ariane.dtb
+
+setenv bootcmd "fatload mmc 0:1 0x82000000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x82000000"
+----------------------------------------------------------
+
+cd /lib/modules/6.4.0/kernel/drivers/hello  
+lsmod 
+insmod hello.ko 
+ lsmod  
+ rmmod hello 
+
+insmod hello.ko whom="Ariane" howmany=3
+
+
+
+
+
+
+
+
+tftp 0x80F80000 am335x-boneblack-ariane.dtb
+
+setenv bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x80F80000"
+
+**********************************************************
+tftp 0x83000000 BB-PWM0-00A0.dtbo
+
+set bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-PWM0-00A0.dtbo; fdt addr 0x80F80000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x80F80000"
+
+
+set bootcmd "fatload mmc 0:1 0x82000000 am335x-evm.dtb; fatload mmc 0:1 0x80007FC0 zImage; fatload mmc 0:1 0x83000000 BB-PWM1-00A0.dtbo; fdt addr 0x82000000; fdt resize 8192; fdt apply 0x83000000; bootz 0x80007FC0 - 0x82000000"
+
+
+/* SPDX-License-Identifier: GPL-2.0 */
+/dts-v1/;
+#include "am335x-evm.dts"
+
+/ {
+    model = "TPSE BeagleBone Black";
+    compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+
+    leds {
+        compatible = "gpio-leds";
+        led0 {
+            label = "beaglebone:green:usr0";
+            gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>; /* USR0 */
+            linux,default-trigger = "heartbeat";
+        };
+        led1 {
+            label = "beaglebone:green:usr1";
+            gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>; /* USR1 */
+            linux,default-trigger = "mmc0";
+        };
+        led2 {
+            label = "beaglebone:green:usr2";
+            gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>; /* USR2 */
+            linux,default-trigger = "cpu0";
+        };
+        led3 {
+            label = "beaglebone:green:usr3";
+            gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>; /* USR3 */
+            linux,default-trigger = "none";
+        };
+    };
+
+    pwm_test {
+        compatible = "pwm-test";
+        pwms = <&ehrpwm1 0 500000 0>; // PWM com período de 500 μs
+        pwm-names = "pwm_test";
+    };
+};
+
+&am33xx_pinmux {
+    pwm_pins: pwm_pins {
+        pinctrl-single,pins = <
+            AM33XX_IOPAD(0x848, PIN_OUTPUT | MUX_MODE6) // P9.14, EHRPWM1A
+            AM33XX_IOPAD(0x84c, PIN_OUTPUT | MUX_MODE6) // P9.16, EHRPWM1B
+        >;
+    };
+};
+
+&ehrpwm1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&pwm_pins>;
+    status = "okay";
+};
+
+
+
+
+#include <linux/module.h>
+#include <linux/kernel.h>
+
+//#error Are we building this file?
+
+static int hello_init(void){
+    printk(KERN_ALERT "Hello, world\n");
+    return(0);
+}
+
+static void hello_exit(void){
+    printk(KERN_ALERT "Goodbye, cruel world\n");
+}
+
+module_init(hello_init);
+module_exit(hello_exit);
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Author Ariane francisca.silva@alu.ufc.br");
+MODULE_DESCRIPTION("Test kernel module");
+MODULE_VERSION("1.0");
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+/* SPDX-License-Identifier: GPL-2.0 */
+/dts-v1/;
+#include "am335x-evm.dts"
+
+/ {
+    model = "TPSE BeagleBone Black";
+    compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+
+    leds {
+        compatible = "gpio-leds";
+        led0 {
+            label = "beaglebone:green:usr0";
+            gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>; /* USR0 */
+            linux,default-trigger = "heartbeat";
+        };
+        led1 {
+            label = "beaglebone:green:usr1";
+            gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>; /* USR1 */
+            linux,default-trigger = "mmc0";
+        };
+        led2 {
+            label = "beaglebone:green:usr2";
+            gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>; /* USR2 */
+            linux,default-trigger = "cpu0";
+        };
+        led3 {
+            label = "beaglebone:green:usr3";
+            gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>; /* USR3 */
+            linux,default-trigger = "none";
+        };
+    };
+
+    pwm_test {
+        compatible = "pwm-test";
+        pwms = <&ehrpwm1 0 1000000 0>, /* PWM1A com período de 1 ms */
+               <&ehrpwm1 1 1000000 0>; /* PWM1B com período de 1 ms */
+        pwm-names = "pwm_test_A", "pwm_test_B";
+    };
+
+    fragment@1 {
+        target = <&epwmss0>;
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+    fragment@2 {
+        target = <&ehrpwm1>;
+        __overlay__ {
+            pinctrl-names = "default";
+            pinctrl-0 = <&pwm_pins>;
+            status = "okay";
+        };
+    };
+};
+
+&am33xx_pinmux {
+    pwm_pins: pwm_pins {
+        pinctrl-single,pins = <
+            AM33XX_IOPAD(0x848, PIN_OUTPUT | MUX_MODE6) // P9.14, EHRPWM1A
+            AM33XX_IOPAD(0x84c, PIN_OUTPUT | MUX_MODE6) // P9.16, EHRPWM1B
+        >;
+    };
+};
+
+&ehrpwm1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&pwm_pins>;
+    status = "okay";
+};
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+
+
+/* SPDX-License-Identifier: GPL-2.0 */
+/dts-v1/;
+#include "am335x-boneblack.dts"
+
+/ {
+    model = "TPSE BeagleBone Black";
+    compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+
+    leds {
+        compatible = "gpio-leds";
+        led0 {
+            label = "beaglebone:green:usr0";
+            gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>; /* USR0 */
+            linux,default-trigger = "heartbeat";
+        };
+        led1 {
+            label = "beaglebone:green:usr1";
+            gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>; /* USR1 */
+            linux,default-trigger = "mmc0";
+        };
+        led2 {
+            label = "beaglebone:green:usr2";
+            gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>; /* USR2 */
+            linux,default-trigger = "cpu0";
+        };
+        led3 {
+            label = "beaglebone:green:usr3";
+            gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>; /* USR3 */
+            linux,default-trigger = "none";
+        };
+    };
+
+    pwm_test {
+        compatible = "pwm-test";
+        pwms = <&ehrpwm1 0 500000 0>; // PWM com período de 500 μs
+        pwm-names = "pwm_test";
+    };
+};
+
+&am33xx_pinmux {
+    pwm_pins: pwm_pins {
+        pinctrl-single,pins = <
+            AM33XX_IOPAD(0x848, PIN_OUTPUT | MUX_MODE6) // P9.14, EHRPWM1A
+            AM33XX_IOPAD(0x84c, PIN_OUTPUT | MUX_MODE6) // P9.16, EHRPWM1B
+        >;
+    };
+};
+
+&ehrpwm1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&pwm_pins>;
+    status = "okay";
+};

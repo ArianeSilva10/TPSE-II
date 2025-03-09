@@ -1,0 +1,66 @@
+comandos pratica 1:
+
+262  sudo apt install openssh-client
+263  ssh debian@192.168.7.2
+264  ssh debian@192.168.7.2
+265  history
+266  nano ~/.bashrc
+267  arm-linux-gcc main.c -o main -static
+268  nano ~/.bashrc
+269  source ~/.bashrc
+270  arm-linux-gcc main.c -o main -static
+271  scp main debian@192.168.7.2:/home/debian
+
+
+TERMINAL BBB:
+ls
+./main
+
+
+SENHA:
+temppwd
+
+ID:
+192.168.7.2
+
+
+comando caso ssh dê errado
+ssh-keygen -f "/home/ariane/.ssh/known_hosts" -R "192.168.7.2"
+
+
+CT_PREFIX:-${HOME}/x-tools}/${CT_HOST:+HOST-${CT_HOST}/}${CT_TARGET}
+
+comandos usados por helder:
+arm-linux-gcc main.c -o main --static
+  335  ls
+  336  arm-linux-gcc main.c -o main_static --static
+  337  arm-linux-gcc main.c -o main_dynamic
+  338  ls
+  339  ls -lha 
+  340  ldd main_dynamic 
+  341  which arm-tpse2-linux-musleabi-gcc
+  342  pwd
+  343  ls
+  344  ls toolchain/
+  345  ls ..
+  346  ls
+  347  ls
+  348  pwd
+  349  ls
+  350  cd crosstool-ng/
+  351  ls
+  352  ./ct-ng menuconfig
+  353  ./ct-ng clean
+  354  ./ct-ng menuconfig
+  355  ./ct-ng cleanall
+  356  ./ct-ng clean all
+  357  ./ct-ng clean
+  358  ./bootstrap 
+  359  ls
+  360  ls ~/x-tools/
+  361  ./ct-ng menuconfig
+  362  cd TPSE-II/
+  363  ls
+  364  cd lab/
+  365  ls
+

@@ -1,0 +1,35 @@
+comandos pratica 2:
+ 
+ sudo umount /dev/mmcblk0p*
+ sudo dmesg
+ sudo dd if=/dev/zero of=/dev/mmcblk0 bs=1M count=16
+ sudo cfdisk /dev/mmcblk0
+ cat /proc/partitions | grep mmc
+ sudo mkfs.vfat -F 32 -n BOOT /dev/mmcblk0p1
+ 
+ COMPILAÇÃO:
+ 
+ export CROSS_COMPILE=arm-linux-
+ ls configs/ | grep am335
+ make am335x_evm_defconfig
+ make DEVICE_TREE=am335x-boneblack
+ ls -lha spl/u-boot-spl*
+ ls -lha u-boot-*
+ 
+ MONTA O CARTÃO:
+ sudo mount /dev/mmcblk0p1 /media/ariane/BOOT
+ sudo dmesg
+ 
+ sudo mkdir -p /media/ariane/BOOT
+ 
+  sudo mount /dev/mmcblk0p1 /media/ariane/BOOT
+  sudo rm /media/ariane/BOOT
+  sudo mkdir -p /media/ariane/BOOT
+  
+  TENTAR DAQUI:
+  sudo mount /dev/mmcblk0p1 /media/ariane/BOOT
+  sudo cp MLO /media/ariane/BOOT
+  sudo cp u-boot.img /media/ariane/BOOT
+  sudo umount /media/ariane/BOOT
+
+
