@@ -1,0 +1,4 @@
+config BR2_PACKAGE_PWM_LED
+    bool "pwm_led"
+    help
+      Programa simples de execucao do led via pwm.

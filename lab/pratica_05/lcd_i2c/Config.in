@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LCD_I2C
+    bool "lcd_i2c"
+    help
+      Programa simples de execucao de lcd i2c.

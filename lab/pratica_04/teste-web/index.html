@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Beaglebone Black Server</title>
+
+    <style>
+    html {
+        font-family: Tahoma;
+        margin: 0px auto;
+        text-align: center;
+        background-color: #66CDAA;
+    }
+
+    .bts {
+        border: none;
+        color: #FFFFFF;
+        padding: 14px 36px;
+        text-decoration: none;
+        font-size: 23px;
+        margin: 1.5px;
+        cursor: pointer;
+        font-family: Verdana;
+    }
+
+    .btOn {
+        background-color: #FF69B4;
+        cursor: pointer;
+        border-radius: 6%;
+    }
+
+    .btOff {
+        background-color: #F08080;
+        cursor: pointer;
+        border-radius: 6%;
+    }
+    </style>
+
+    <script>
+    function controlLED(led, estado) {
+        // faz uma requisicao GET para o servidor da BBB
+        fetch(`http://10.10.0.2:8080/led?led=${led}&estado=${estado}`)
+            .then((response) => response.text()) // Lê o texto da resposta
+            .then((data) => {
+                console.log(data); // exibe a resposta no console
+                // atualiza o status do LED na página
+                const statusElement = document.getElementById(`led${led}-status`);
+                statusElement.textContent = estado === 1 ? 'Ligado' : 'Desligado';
+            })
+            .catch((error) => {
+                console.error("Erro:", error); // Exibe erros no console
+            });
+    }
+    </script>
+</head>
+
+<body>
+
+    <h2>Beaglebone Black Server</h2>
+    
+    <!-- LED 0 -->
+    <p>LED 0: <span id="led0-status"></span></p>
+    <button class="bts btOn" onclick="controlLED(0, 1)">Turn LED0 On</button>
+    <button class="bts btOff" onclick="controlLED(0, 0)">Turn LED0 Off</button>
+
+    <!-- LED 1 -->
+    <p>LED 1: <span id="led1-status"></span></p>
+    <button class="bts btOn" onclick="controlLED(1, 1)">Turn LED1 On</button>
+    <button class="bts btOff" onclick="controlLED(1, 0)">Turn LED1 Off</button>
+
+    <!-- LED 2 -->
+    <p>LED 2 : <span id="led2-status"></span></p>
+    <button class="bts btOn" onclick="controlLED(2, 1)">Turn LED2 On</button>
+    <button class="bts btOff" onclick="controlLED(2, 0)">Turn LED2 Off</button>
+
+    <!-- LED 3 -->
+    <p>LED 3 : <span id="led3-status"></span></p>
+    <button class="bts btOn" onclick="controlLED(3, 1)">Turn LED3 On</button>
+    <button class="bts btOff" onclick="controlLED(3, 0)">Turn LED3 Off</button>
+
+</body>
+
+</html>

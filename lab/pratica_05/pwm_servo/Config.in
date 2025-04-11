@@ -1,0 +1,4 @@
+config BR2_PACKAGE_PWM_SERVO
+    bool "pwm_servo"
+    help
+      Programa simples de execucao do servo motor via pwm.

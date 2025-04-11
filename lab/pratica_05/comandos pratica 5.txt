@@ -1,5 +1,7 @@
 comandos pratica 5
 
+usei a versao 6.0 no projeto final porque algumas não deram certo depois
+
 curso BBB-udemy:
 
 aula 82:
@@ -136,6 +138,7 @@ kernel
 			-Using an in-tree board defconfig file
 		Board defconfig
 			-*muda de am335x_evm para am335x_boneblack
+			sugiro usar o evm pois é nele que tem o pwm da pratica futura
 salva
 ##############################################
 make -j4
@@ -249,7 +252,13 @@ echo ’PermitEmptyPasswords yes’ >> /etc/ssh/sshd_config
 
 U-Boot 2022.04 (Oct 15 2022 - 01:12:15 -0300) ArianeBoot, by Ariane - Copyright (R) 2024
 
+pratica 02:
+cria a aplicacao e adiciona a proxima linha no Config.in da pasta packages que é one vai estar sua aplicação
 source "package/leds_control_app/Config.in"
+
+pratica 03:
+um script no /etc/init.d
+para os leds piscarem
 
 sudo tar -C ~/TPSE-II/lab/rootfs/ -xf output/images/rootfs.tar
 

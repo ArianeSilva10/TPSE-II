@@ -71,3 +71,8 @@ chmod +x socket_server_static
     cp piscarleds_static /home/ariane/TPSE-II/lab/rootfs/pratica/
     
     chmod +x piscarleds_static
+    
+    
+    passo a passo da execução no meu video:
+    
+https://youtu.be/o2Z3CtBQ40g?si=xoWZ4yxhf7du1_Yu

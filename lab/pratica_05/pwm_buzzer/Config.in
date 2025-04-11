@@ -1,0 +1,4 @@
+config BR2_PACKAGE_PWM_BUZZER
+    bool "pwm_buzzer"
+    help
+      Programa simples para tocar buzzer com pwm.

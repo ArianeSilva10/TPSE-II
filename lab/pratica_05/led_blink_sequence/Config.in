@@ -1,0 +1,5 @@
+config BR2_PACKAGE_LED_BLINK_SEQUENCE
+    bool "led_blink_sequence"
+    help
+      Programa simples para piscar LEDS usando GPIO num 
+      sequencia de 10 vezes consecultivas.

@@ -165,3 +165,376 @@ echo 2000000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
 echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable
 
 echo 0 > /sys/class/pwm/pwmchip0/unexport
+
+
+
+
+
+
+
+
+
+
+
+***********************************************************************************
+Conteudo dos dontpad:
+pratica8tpse
+
+entra na pasta /lib/modules/6.4.0/kernel/drivers/usb
+
+põe esses comandos se o  insmod e modprobe do pdf der erro:
+
+modprobe usbcore                                                           
+modprobe usb-common                                                        
+modprobe ehci-hcd                                                          
+modprobe uhci-hcd                                                          
+modprobe ohci-hcd                                                          
+modprobe xhci-hcd                                                          
+lsusb                                                                      
+dmesg | grep -i usb                                                        
+lspci | grep -i usb                                                        
+modprobe -r usbcore                                                        
+modprobe usbcore                                                           
+insmod /lib/modules/6.4.0/kernel/drivers/usb/storage/usb-storage.ko        
+modprobe usb-storage  
+
+
+# cd /lib/modules/6.4.0/kernel/drivers/hello/                                   
+# lsmod                                                                         
+Module                  Size  Used by    Not tainted                            
+# insmod hello.ko                                                               
+[   95.456308] hello: loading out-of-tree module taints kernel.                 
+[   95.462421] Hello, world                                                     
+# 
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////
+
+&leds {
+    pinctrl-names = "default";
+    pinctrl-0 = <&user_leds_s0>;
+    status = "okay";
+
+    usr0 {
+        label = "beaglebone:green:usr0";
+        gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+        default-state = "on";
+    };
+
+    usr1 {
+        label = "beaglebone:green:usr1";
+        gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
+        default-state = "off";
+    };
+
+    usr2 {
+        label = "beaglebone:green:usr2";
+        gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
+        default-state = "off";
+    };
+
+    usr3 {
+        label = "beaglebone:green:usr3";
+        gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>;
+        default-state = "off";
+    };
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+/* SPDX-License-Identifier: GPL-2.0 */
+/dts-v1/;
+#include "am335x-boneblack-wireless.dts"
+
+/ {
+    model = "TPSE BeagleBone Black";
+    compatible = "ti,am335x-boneblack", "ti,am335x";
+
+    leds {
+        compatible = "gpio-leds";
+
+        led0 {
+            label = "beaglebone:green:usr0";
+            gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>; /* USR0 */
+            linux,default-trigger = "heartbeat";
+        };
+
+        led1 {
+            label = "beaglebone:green:usr1";
+            gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>; /* USR1 */
+            linux,default-trigger = "mmc0";
+        };
+
+        led2 {
+            label = "beaglebone:green:usr2";
+            gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>; /* USR2 */
+            linux,default-trigger = "cpu0";
+        };
+
+        led3 {
+            label = "beaglebone:green:usr3";
+            gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>; /* USR3 */
+            linux,default-trigger = "none";
+        };
+    };
+
+    pwm {
+        compatible = "pwm-beaglebone";
+        pwms = <&ehrpwm0 0 5000000>, <&ehrpwm0 1 5000000>;
+        status = "okay";
+    };
+};
+
+
+
+
+
+
+##########################################################################
+
+ls output/build/linux-v6.4/arch/arm/boot/dts/ | grep am335x-boneblack
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+/* SPDX-License-Identifier: GPL-2.0 */
+/dts-v1/;
+#include "am335x-boneblack.dts"
+
+/ {
+    model = "TPSE BeagleBone Black";
+    compatible = "ti,am335x-boneblack", "ti,am335x";
+
+/ {
+    leds {
+        compatible = "gpio-leds";
+        led0 {
+            label = "beaglebone:green:usr0";
+            gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>; /* USR0 */
+            linux,default-trigger = "heartbeat";
+        };
+        led1 {
+            label = "beaglebone:green:usr1";
+            gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>; /* USR1 */
+            linux,default-trigger = "mmc0";
+        };
+        led2 {
+            label = "beaglebone:green:usr2";
+            gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>; /* USR2 */
+            linux,default-trigger = "cpu0";
+        };
+        led3 {
+            label = "beaglebone:green:usr3";
+            gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>; /* USR3 */
+            linux,default-trigger = "none";
+        };
+    };
+
+    pwm_test {
+        compatible = "pwm-test";
+        pwms = <&ehrpwm1 0 500000 0>; // PWM com período de 500 μs
+        pwm-names = "pwm_test";
+    };
+};
+
+&am33xx_pinmux {
+    pwm_pins: pwm_pins {
+        pinctrl-single,pins = <
+            AM33XX_IOPAD(0x848, PIN_OUTPUT | MUX_MODE6) // P9.14, EHRPWM1A
+            AM33XX_IOPAD(0x84c, PIN_OUTPUT | MUX_MODE6) // P9.16, EHRPWM1B
+        >;
+    };
+};
+
+&ehrpwm1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&pwm_pins>;
+    status = "okay";
+};
+};
+
+
+
+
+
+444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444
+
+
+
+/* SPDX-License-Identifier: GPL-2.0 */
+/dts-v1/;
+#include "am335x-evm.dts"
+
+/ {
+    model = "TPSE BeagleBone Black";
+    compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+
+    leds {
+        compatible = "gpio-leds";
+        led0 {
+            label = "beaglebone:green:usr0";
+            gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>; /* USR0 */
+            linux,default-trigger = "heartbeat";
+        };
+        led1 {
+            label = "beaglebone:green:usr1";
+            gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>; /* USR1 */
+            linux,default-trigger = "mmc0";
+        };
+        led2 {
+            label = "beaglebone:green:usr2";
+            gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>; /* USR2 */
+            linux,default-trigger = "cpu0";
+        };
+        led3 {
+            label = "beaglebone:green:usr3";
+            gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>; /* USR3 */
+            linux,default-trigger = "none";
+        };
+    };
+
+    pwm_test {
+        compatible = "pwm-test";
+        pwms = <&ehrpwm1 0 500000 0>; // PWM com período de 500 μs
+        pwm-names = "pwm_test";
+    };
+};
+
+&am33xx_pinmux {
+    pwm_pins: pwm_pins {
+        pinctrl-single,pins = <
+            AM33XX_IOPAD(0x848, PIN_OUTPUT | MUX_MODE6) // P9.14, EHRPWM1A
+            AM33XX_IOPAD(0x84c, PIN_OUTPUT | MUX_MODE6) // P9.16, EHRPWM1B
+        >;
+    };
+};
+
+&ehrpwm1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&pwm_pins>;
+    status = "okay";
+};
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ gedit output/build/linux-v6.0/arch/arm/boot/dts/am335x-boneblack-raissa.dts
+
+ gedit output/build/linux-v6.4/arch/arm/boot/dts/am335x-boneblack-ariane.dts
+
+
+tftp 0x80F80000 am335x-boneblack-ariane.dtb
+
+setenv bootcmd "fatload mmc 0:1 0x80F80000 am335x-boneblack-ariane.dtb; fatload mmc 0:1 0x80007FC0 zImage; bootz 0x80007FC0 - 0x80F80000"
+
+##############################################################################################################################
+
+LEDS:
+
+# echo 1 > /sys/class/leds/beaglebone:green:usr0/brightness                     
+# echo 1 > /sys/class/leds/beaglebone:green:usr1/brightness                     
+# echo 1 > /sys/class/leds/beaglebone:green:usr2/brightness                     
+# echo 1 > /sys/class/leds/beaglebone:green:usr3/brightness                     
+# echo 0 > /sys/class/leds/beaglebone:green:usr3/brightness                     
+# echo 0 > /sys/class/leds/beaglebone:green:usr2/brightness                     
+# echo 0 > /sys/class/leds/beaglebone:green:usr1/brightness                     
+# echo 0 > /sys/class/leds/beaglebone:green:usr0/brightness  
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+make linux-menuconfig
+Device Drivers: 
+ --- LED Support                                                    
+     <*>   LED Class Support                                          
+     < >     LED Flash Class Support                                
+    <M>     LED Multicolor Class Support                            
+  [,*]     LED Class brightness_hw_changed attribute support 
+<*>   LED Support for GPIO connected LEDs  -
+ <M>   LED Support for N.S. LP3944 (Fun Light) I2C chip  
+<M> LED Support for TI/National LP5523/55231 LED driver chip
+ <M>   LED support for PCA963x I2C chip   
+<M>   PWM driven LED Support 
+ [*]   LED support for LEDs on system controllers  
+  [*]   LED Trigger support  ---> 	
+
+
+
+
+
+
+
+
+
+
+
+___________________________________________
+
+/dts-v1/;
+#include "am335x-boneblack.dts"
+
+/ {
+    compatible = "ti,am335x-boneblack", "ti,am33xx";
+    model = "Ariane AM335x BeagleBone Black";
+
+    leds {
+        compatible = "gpio-leds";
+        label = "leds_beaglebone";
+
+        led2 {
+            label = "beaglebone:green:heartbeat";
+            gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+            linux,default-trigger = "heartbeat";  
+            default-state = "on"; 
+        };
+
+        led3 {
+            label = "beaglebone:green:mmc0";
+            gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
+            linux,default-trigger = "mmc0"; 
+            default-state = "on"; 
+        };
+
+        led4 {
+            label = "beaglebone:green:usr2";
+            gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
+            linux,default-trigger = "cpu0"; 
+            default-state = "on";  
+        };
+
+        led5 {
+            label = "beaglebone:green:usr3";
+            gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>;
+            linux,default-trigger = "mmc1";
+            default-state = "on"; 
+        };
+    };
+
+
+};
+&epwmss0 {
+	status = "okay";
+
+	ecap0: pwm@100 {
+		status = "okay";
+		pinctrl-names = "default";
+		pinctrl-0 = <&ecap0_pins>;
+	};
+};
+
+
+
+&am33xx_pinmux {
+    ecap0_pins: pinmux_ecap0_pins {
+        pinctrl-single,pins = <
+            AM33XX_PADCONF(AM335X_PIN_ECAP0_IN_PWM0_OUT, PIN_OUTPUT, MUX_MODE0)
+        >;
+    };
+};
+
+
+*************************************************************************
+
+tinha dts q dava erro por causa da linha compatible q se não me engano faltava o am33xx, enfim só copiar do dts existente, lembrando que eu modifiquei um Makefile dentro do buildroot pra gerar o dtb a partir do dts que criei.
